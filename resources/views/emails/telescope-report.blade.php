@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Telescope Error Report</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #2d3748;
+        }
+        .header {
+            background-color: #f7fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .summary-item {
+            background-color: #edf2f7;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .summary-item strong {
+            display: block;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        .summary-item .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background-color: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .error-item {
+            background-color: #fff5f5;
+            border-left: 4px solid #fc8181;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .error-item .time {
+            color: #718096;
+            font-size: 14px;
+        }
+        .error-item .exception {
+            font-weight: bold;
+            color: #c53030;
+            margin: 5px 0;
+        }
+        .error-item .message {
+            color: #2d3748;
+            margin: 5px 0;
+        }
+        .error-item .location {
+            color: #718096;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔭 Telescope Error Report</h1>
+        <p>Period: <strong>{{ ucfirst($period) }}</strong></p>
+        <p>From: {{ $startDate->format('Y-m-d H:i:s') }} To: {{ $endDate->format('Y-m-d H:i:s') }}</p>
+    </div>
+
+    <h2>📊 Summary</h2>
+    <div class="summary">
+        <div class="summary-item">
+            <strong>Total Errors</strong>
+            <div class="value">{{ $data['total_errors'] }}</div>
+        </div>
+        <div class="summary-item">
+            <strong>Affected Users</strong>
+            <div class="value">{{ $data['affected_users'] }}</div>
+        </div>
+        <div class="summary-item">
+            <strong>Failed Jobs</strong>
+            <div class="value">{{ $data['failed_jobs'] }}</div>
+        </div>
+        <div class="summary-item">
+            <strong>Slow Queries</strong>
+            <div class="value">{{ $data['slow_queries'] }}</div>
+        </div>
+    </div>
+
+    <h2>🚨 Top Exceptions</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Exception Type</th>
+                <th style="text-align: right;">Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($data['exceptions'] as $exception)
+            <tr>
+                <td>{{ str_replace('"', '', $exception->exception_class ?? 'Unknown') }}</td>
+                <td style="text-align: right;">{{ $exception->count }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <h2>📈 Hourly Distribution</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Time Range</th>
+                <th style="text-align: right;">Error Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($data['hourly_errors'] as $hour)
+            <tr>
+                <td>{{ sprintf('%02d:00 - %02d:59', $hour->hour, $hour->hour) }}</td>
+                <td style="text-align: right;">{{ $hour->count }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <h2>🔍 Recent Errors</h2>
+    @foreach($data['recent_errors'] as $error)
+    <div class="error-item">
+        <div class="time">{{ $error['created_at'] }}</div>
+        <div class="exception">{{ $error['exception'] }}</div>
+        <div class="message">{{ $error['message'] }}</div>
+        <div class="location">{{ $error['file'] }}:{{ $error['line'] }}</div>
+    </div>
+    @endforeach
+
+    <div class="footer">
+        <p>This report was automatically generated by Laravel Telescope.</p>
+        <p>View full details at: <a href="{{ url('/telescope') }}">{{ url('/telescope') }}</a></p>
+    </div>
+</body>
+</html> 
