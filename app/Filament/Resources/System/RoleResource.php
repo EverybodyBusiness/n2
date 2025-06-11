@@ -48,8 +48,9 @@ class RoleResource extends Resource implements HasShieldPermissions
                                 Forms\Components\TextInput::make('name')
                                     ->label(__('filament-shield::filament-shield.field.name'))
                                     ->unique(
-                                        ignoreRecord: true, /** @phpstan-ignore-next-line */
-                                        modifyRuleUsing: fn (Unique $rule) => ! Utils::isTenancyEnabled() ? $rule : $rule->where(Utils::getTenantModelForeignKey(), Filament::getTenant()?->id)
+                                        ignoreRecord: true,
+                                        /** @phpstan-ignore-next-line */
+                                        modifyRuleUsing: fn(Unique $rule) => ! Utils::isTenancyEnabled() ? $rule : $rule->where(Utils::getTenantModelForeignKey(), Filament::getTenant()?->id)
                                     )
                                     ->required()
                                     ->maxLength(255),
@@ -65,15 +66,15 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->placeholder(__('filament-shield::filament-shield.field.team.placeholder'))
                                     /** @phpstan-ignore-next-line */
                                     ->default([Filament::getTenant()?->id])
-                                    ->options(fn (): Arrayable => Utils::getTenantModel() ? Utils::getTenantModel()::pluck('name', 'id') : collect())
-                                    ->hidden(fn (): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled()))
-                                    ->dehydrated(fn (): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled())),
+                                    ->options(fn(): Arrayable => Utils::getTenantModel() ? Utils::getTenantModel()::pluck('name', 'id') : collect())
+                                    ->hidden(fn(): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled()))
+                                    ->dehydrated(fn(): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled())),
                                 ShieldSelectAllToggle::make('select_all')
                                     ->onIcon('heroicon-s-shield-check')
                                     ->offIcon('heroicon-s-shield-exclamation')
                                     ->label(__('filament-shield::filament-shield.field.select_all.name'))
-                                    ->helperText(fn (): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
-                                    ->dehydrated(fn (bool $state): bool => $state),
+                                    ->helperText(fn(): HtmlString => new HtmlString(__('filament-shield::filament-shield.field.select_all.message')))
+                                    ->dehydrated(fn(bool $state): bool => $state),
 
                             ])
                             ->columns([
@@ -92,7 +93,7 @@ class RoleResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('name')
                     ->weight('font-medium')
                     ->label(__('filament-shield::filament-shield.column.name'))
-                    ->formatStateUsing(fn ($state): string => Str::headline($state))
+                    ->formatStateUsing(fn($state): string => Str::headline($state))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('guard_name')
                     ->badge()
@@ -101,10 +102,10 @@ class RoleResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('team.name')
                     ->default('Global')
                     ->badge()
-                    ->color(fn (mixed $state): string => str($state)->contains('Global') ? 'gray' : 'primary')
+                    ->color(fn(mixed $state): string => str($state)->contains('Global') ? 'gray' : 'primary')
                     ->label(__('filament-shield::filament-shield.column.team'))
                     ->searchable()
-                    ->visible(fn (): bool => static::shield()->isCentralApp() && Utils::isTenancyEnabled()),
+                    ->visible(fn(): bool => static::shield()->isCentralApp() && Utils::isTenancyEnabled()),
                 Tables\Columns\TextColumn::make('permissions_count')
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.permissions'))
@@ -165,7 +166,8 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Utils::isResourceNavigationRegistered();
+        // 항상 네비게이션에 표시되도록 강제로 true 반환
+        return true;
     }
 
     public static function getNavigationGroup(): ?string
@@ -215,5 +217,31 @@ class RoleResource extends Resource implements HasShieldPermissions
     public static function canGloballySearch(): bool
     {
         return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
+    }
+
+    // 권한 메소드들을 오버라이드하여 항상 true 반환
+    public static function canViewAny(): bool
+    {
+        return true;
+    }
+
+    public static function canView($record): bool
+    {
+        return true;
+    }
+
+    public static function canCreate(): bool
+    {
+        return true;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return true;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return true;
     }
 }

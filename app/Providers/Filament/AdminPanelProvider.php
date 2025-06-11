@@ -18,6 +18,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use App\Filament\Resources\System\RoleResource;
+use App\Filament\Resources\System\TelescopeEntryResource;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,9 +34,14 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources\\System')
+            // ->resources([
+            //     RoleResource::class,
+            //     TelescopeEntryResource::class,
+            // ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                Pages\Dashboard::class,     // vendor 에 등록된 필라멘트 기본 대쉬보드, 커스텀으로 등록시 삭제 가능
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
