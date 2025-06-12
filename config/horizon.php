@@ -271,6 +271,17 @@ return [
             'tries' => 3,                         // 3번 재시도
             'timeout' => 120,                     // 2분 타임아웃
         ],
+        
+        // 백업 전용 supervisor: 시스템 백업 작업
+        'supervisor-backups' => [
+            'connection' => 'redis',
+            'queue' => ['backups'],               // backups 큐만 처리
+            'balance' => 'simple',
+            'maxProcesses' => 1,                  // 1개 워커 (동시 백업 방지)
+            'memory' => 512,                      // 512MB 메모리 (대용량 백업)
+            'tries' => 1,                         // 1번만 시도
+            'timeout' => 3600,                    // 1시간 타임아웃 (대용량 백업 고려)
+        ],
     ],
 
     // 환경별 supervisor 설정 오버라이드
@@ -291,6 +302,10 @@ return [
             'supervisor-media' => [
                 'maxProcesses' => 5,              // 5개 워커로 증가
             ],
+            'supervisor-backups' => [
+                'maxProcesses' => 2,              // 2개 워커로 증가 (동시 백업 가능)
+                'memory' => 1024,                 // 1GB 메모리로 증가
+            ],
         ],
 
         // 로컬 개발 환경: 최소 리소스 사용
@@ -306,6 +321,9 @@ return [
             ],
             'supervisor-media' => [
                 'maxProcesses' => 2,              // 2개 워커 유지
+            ],
+            'supervisor-backups' => [
+                'maxProcesses' => 1,              // 1개 워커 유지
             ],
         ],
     ],
