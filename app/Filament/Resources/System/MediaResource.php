@@ -22,7 +22,7 @@ class MediaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-photo';
     protected static ?string $navigationGroup = '시스템';
     protected static ?string $navigationLabel = '미디어';
-    protected static ?int $navigationSort = 30;
+    protected static ?int $navigationSort = 10;
     
     protected static ?string $modelLabel = '미디어';
     protected static ?string $pluralModelLabel = '미디어 파일';

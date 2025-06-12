@@ -22,7 +22,7 @@ class BackupManager extends Page implements HasTable
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationGroup = '시스템';
     protected static ?string $navigationLabel = '백업';
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 60;
     
     protected static string $view = 'filament.pages.system.backup-manager';
     

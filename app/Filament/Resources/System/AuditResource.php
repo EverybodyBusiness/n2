@@ -29,7 +29,7 @@ class AuditResource extends Resource
 
     protected static ?string $pluralLabel = '감사 로그';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 40;
 
     public static function form(Form $form): Form
     {

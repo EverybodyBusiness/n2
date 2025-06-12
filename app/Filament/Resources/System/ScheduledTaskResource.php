@@ -36,7 +36,7 @@ class ScheduledTaskResource extends Resource
     
     protected static ?string $pluralModelLabel = '스케줄 작업';
     
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 35;
 
     public static function form(Form $form): Form
     {
