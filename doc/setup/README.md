@@ -96,7 +96,7 @@ npm run dev
 | Step 4.5 | 에러 로깅 (Telescope) | ✅ 완료 | [문서](./step-4.5-telescope-error-logging.md) |
 | Step 5 | 실시간 통신 (Reverb) | 🟡 진행중 | [문서](./step-5-reverb-websocket.md) |
 | Step 6 | 알림 시스템 | 🔲 예정 | - |
-| Step 7 | 작업 큐 | 🔲 예정 | - |
+| Step 7 | 작업 큐 (Horizon) | ✅ 완료 | [문서](./step-7-horizon-queue.md) |
 | Step 8 | 미디어 관리 | 🔲 예정 | - |
 | Step 9 | 백업 시스템 | 🔲 예정 | - |
 
