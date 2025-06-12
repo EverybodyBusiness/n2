@@ -306,6 +306,15 @@ return [
                 'maxProcesses' => 2,              // 2개 워커로 증가 (동시 백업 가능)
                 'memory' => 1024,                 // 1GB 메모리로 증가
             ],
+            'supervisor-schedules' => [
+                'connection' => 'redis',
+                'queue' => ['schedules'],
+                'balance' => 'simple',
+                'maxProcesses' => 3,
+                'memory' => 256,
+                'tries' => 2,
+                'timeout' => 3600,
+            ],
         ],
 
         // 로컬 개발 환경: 최소 리소스 사용
@@ -324,6 +333,15 @@ return [
             ],
             'supervisor-backups' => [
                 'maxProcesses' => 1,              // 1개 워커 유지
+            ],
+            'supervisor-schedules' => [
+                'connection' => 'redis',
+                'queue' => ['schedules'],
+                'balance' => 'simple',
+                'maxProcesses' => 2,
+                'memory' => 256,
+                'tries' => 2,
+                'timeout' => 3600,
             ],
         ],
     ],
