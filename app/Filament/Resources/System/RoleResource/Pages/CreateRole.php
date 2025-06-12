@@ -4,7 +4,6 @@ namespace App\Filament\Resources\System\RoleResource\Pages;
 
 use App\Filament\Resources\System\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
-use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -17,23 +16,15 @@ class CreateRole extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        if (! Utils::isSuperAdmin()) {
-            $data[Utils::getTeamModelForeignKey()] = Filament::getTenant()?->id;
-        }
-
         $this->permissions = collect($data)
             ->filter(function ($permission, $key) {
-                return ! in_array($key, ['name', 'guard_name', 'select_all', Utils::getTenantModelForeignKey()]);
+                return ! in_array($key, ['name', 'title', 'guard_name', 'select_all']);
             })
             ->values()
             ->flatten()
             ->unique();
 
-        if (Arr::has($data, Utils::getTenantModelForeignKey())) {
-            return Arr::only($data, ['name', 'guard_name', Utils::getTenantModelForeignKey()]);
-        }
-
-        return Arr::only($data, ['name', 'guard_name']);
+        return Arr::only($data, ['name', 'title', 'guard_name']);
     }
 
     protected function afterCreate(): void

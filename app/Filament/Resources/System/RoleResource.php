@@ -25,6 +25,11 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function getRecordTitle($record): ?string
+    {
+        return $record->title ?: $record->name;
+    }
+
     public static function getPermissionPrefixes(): array
     {
         return [
@@ -47,13 +52,15 @@ class RoleResource extends Resource implements HasShieldPermissions
                             ->schema([
                                 Forms\Components\TextInput::make('name')
                                     ->label(__('filament-shield::filament-shield.field.name'))
-                                    ->unique(
-                                        ignoreRecord: true,
-                                        /** @phpstan-ignore-next-line */
-                                        modifyRuleUsing: fn(Unique $rule) => ! Utils::isTenancyEnabled() ? $rule : $rule->where(Utils::getTenantModelForeignKey(), Filament::getTenant()?->id)
-                                    )
+                                    ->unique(ignoreRecord: true)
                                     ->required()
                                     ->maxLength(255),
+
+                                Forms\Components\TextInput::make('title')
+                                    ->label('표시명')
+                                    ->placeholder('사용자에게 표시될 역할명')
+                                    ->maxLength(255)
+                                    ->helperText('비워두면 name 필드가 표시됩니다.'),
 
                                 Forms\Components\TextInput::make('guard_name')
                                     ->label(__('filament-shield::filament-shield.field.guard_name'))
@@ -61,14 +68,6 @@ class RoleResource extends Resource implements HasShieldPermissions
                                     ->nullable()
                                     ->maxLength(255),
 
-                                Forms\Components\Select::make(config('permission.column_names.team_foreign_key'))
-                                    ->label(__('filament-shield::filament-shield.field.team'))
-                                    ->placeholder(__('filament-shield::filament-shield.field.team.placeholder'))
-                                    /** @phpstan-ignore-next-line */
-                                    ->default([Filament::getTenant()?->id])
-                                    ->options(fn(): Arrayable => Utils::getTenantModel() ? Utils::getTenantModel()::pluck('name', 'id') : collect())
-                                    ->hidden(fn(): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled()))
-                                    ->dehydrated(fn(): bool => ! (static::shield()->isCentralApp() && Utils::isTenancyEnabled())),
                                 ShieldSelectAllToggle::make('select_all')
                                     ->onIcon('heroicon-s-shield-check')
                                     ->offIcon('heroicon-s-shield-exclamation')
@@ -95,17 +94,14 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->label(__('filament-shield::filament-shield.column.name'))
                     ->formatStateUsing(fn($state): string => Str::headline($state))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('title')
+                    ->label('표시명')
+                    ->placeholder('(없음)')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('guard_name')
                     ->badge()
                     ->color('warning')
                     ->label(__('filament-shield::filament-shield.column.guard_name')),
-                Tables\Columns\TextColumn::make('team.name')
-                    ->default('Global')
-                    ->badge()
-                    ->color(fn(mixed $state): string => str($state)->contains('Global') ? 'gray' : 'primary')
-                    ->label(__('filament-shield::filament-shield.column.team'))
-                    ->searchable()
-                    ->visible(fn(): bool => static::shield()->isCentralApp() && Utils::isTenancyEnabled()),
                 Tables\Columns\TextColumn::make('permissions_count')
                     ->badge()
                     ->label(__('filament-shield::filament-shield.column.permissions'))
@@ -192,7 +188,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getSubNavigationPosition(): SubNavigationPosition
     {
-        return Utils::getSubNavigationPosition() ?? static::$subNavigationPosition;
+        return SubNavigationPosition::Top;
     }
 
     public static function getSlug(): string
@@ -202,19 +198,17 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getNavigationBadge(): ?string
     {
-        return Utils::isResourceNavigationBadgeEnabled()
-            ? strval(static::getEloquentQuery()->count())
-            : null;
+        return strval(static::getEloquentQuery()->count());
     }
 
     public static function isScopedToTenant(): bool
     {
-        return Utils::isScopedToTenant();
+        return false;
     }
 
     public static function canGloballySearch(): bool
     {
-        return Utils::isResourceGloballySearchable() && count(static::getGloballySearchableAttributes()) && static::canViewAny();
+        return count(static::getGloballySearchableAttributes()) && static::canViewAny();
     }
 
     // 권한 메소드들을 오버라이드하여 항상 true 반환
