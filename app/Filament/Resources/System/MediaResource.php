@@ -15,12 +15,14 @@ use Filament\Tables\Filters\Filter;
 
 class MediaResource extends Resource
 {
-    protected static ?string $model = Media::class;
-
+        protected static ?string $model = Media::class;
+    
+    protected static ?string $slug = 'system/media';
+    
     protected static ?string $navigationIcon = 'heroicon-o-photo';
     protected static ?string $navigationGroup = '시스템';
-    protected static ?string $navigationLabel = '미디어 관리';
-    protected static ?int $navigationSort = 6;
+    protected static ?string $navigationLabel = '미디어';
+    protected static ?int $navigationSort = 30;
     
     protected static ?string $modelLabel = '미디어';
     protected static ?string $pluralModelLabel = '미디어 파일';

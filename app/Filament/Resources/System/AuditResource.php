@@ -16,18 +16,20 @@ use Illuminate\Database\Eloquent\Builder;
 class AuditResource extends Resource
 {
     protected static ?string $model = Audit::class;
+    
+    protected static ?string $slug = 'system/audits';
 
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
     protected static ?string $navigationLabel = '감사 로그';
 
-    protected static ?string $navigationGroup = '시스템 관리';
+    protected static ?string $navigationGroup = '시스템';
 
     protected static ?string $label = '감사 로그';
 
     protected static ?string $pluralLabel = '감사 로그';
 
-    protected static ?int $navigationSort = 99;
+    protected static ?int $navigationSort = 20;
 
     public static function form(Form $form): Form
     {

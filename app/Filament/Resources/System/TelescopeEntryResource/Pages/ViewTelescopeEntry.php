@@ -16,4 +16,9 @@ class ViewTelescopeEntry extends ViewRecord
             // No edit action for Telescope entries
         ];
     }
+
+    public function getSubheading(): ?string
+    {
+        return '로그 항목의 상세 정보와 스택 트레이스를 확인합니다.';
+    }
 }

@@ -24,6 +24,6 @@ class ViewAudit extends ViewRecord
 
     public function getSubheading(): ?string
     {
-        return "ID: {$this->record->id} | {$this->record->event_name} | {$this->record->formatted_created_at}";
+        return '감사 로그의 상세 정보와 변경 내역을 확인합니다.';
     }
 } 

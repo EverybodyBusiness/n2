@@ -15,18 +15,20 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class TelescopeEntryResource extends Resource
 {
     protected static ?string $model = TelescopeEntry::class;
+    
+    protected static ?string $slug = 'system/telescope-entries';
 
     protected static ?string $navigationIcon = 'heroicon-o-exclamation-triangle';
     
-    protected static ?string $navigationGroup = 'System';
+    protected static ?string $navigationGroup = '시스템';
     
-    protected static ?string $navigationLabel = 'Error Logs';
+    protected static ?string $navigationLabel = '시스템 로그';
     
-    protected static ?string $modelLabel = 'Error Log';
+    protected static ?string $modelLabel = '시스템 로그';
     
-    protected static ?string $pluralModelLabel = 'Error Logs';
+    protected static ?string $pluralModelLabel = '시스템 로그';
     
-    protected static ?int $navigationSort = 99;
+    protected static ?int $navigationSort = 50;
 
     public static function form(Form $form): Form
     {
@@ -176,6 +178,7 @@ class TelescopeEntryResource extends Resource
             'view' => Pages\ViewTelescopeEntry::route('/{record}'),
         ];
     }
+
 
     public static function canCreate(): bool
     {

@@ -172,14 +172,12 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getNavigationGroup(): ?string
     {
-        return Utils::isResourceNavigationGroupEnabled()
-            ? __('filament-shield::filament-shield.nav.group')
-            : '';
+        return '시스템';
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('filament-shield::filament-shield.nav.role.label');
+        return '역할';
     }
 
     public static function getNavigationIcon(): string
@@ -189,7 +187,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getNavigationSort(): ?int
     {
-        return Utils::getResourceNavigationSort();
+        return 10; // 역할이 시스템 그룹에서 첫 번째
     }
 
     public static function getSubNavigationPosition(): SubNavigationPosition
@@ -199,7 +197,7 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getSlug(): string
     {
-        return Utils::getResourceSlug();
+        return 'system/roles';
     }
 
     public static function getNavigationBadge(): ?string

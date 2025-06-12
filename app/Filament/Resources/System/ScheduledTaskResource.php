@@ -23,12 +23,14 @@ use Filament\Tables\Filters\TernaryFilter;
 class ScheduledTaskResource extends Resource
 {
     protected static ?string $model = ScheduledTask::class;
+    
+    protected static ?string $slug = 'system/scheduled-tasks';
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     
-    protected static ?string $navigationGroup = '시스템 관리';
+    protected static ?string $navigationGroup = '시스템';
     
-    protected static ?string $navigationLabel = '스케줄 관리';
+    protected static ?string $navigationLabel = '예약 작업';
     
     protected static ?string $modelLabel = '스케줄 작업';
     

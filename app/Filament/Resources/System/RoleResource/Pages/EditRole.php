@@ -44,11 +44,17 @@ class EditRole extends EditRecord
         $permissionModels = collect();
         $this->permissions->each(function ($permission) use ($permissionModels) {
             $permissionModels->push(Utils::getPermissionModel()::firstOrCreate([
+                /** @phpstan-ignore-next-line */
                 'name' => $permission,
                 'guard_name' => $this->data['guard_name'],
             ]));
         });
 
         $this->record->syncPermissions($permissionModels);
+    }
+
+    public function getSubheading(): ?string
+    {
+        return '역할 정보를 수정하고 권한을 변경합니다.';
     }
 }

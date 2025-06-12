@@ -35,4 +35,9 @@ class ListScheduledTasks extends ListRecords
                 ->badgeColor('danger'),
         ];
     }
+
+    public function getSubheading(): ?string
+    {
+        return '시스템의 예약된 작업을 관리하고 실행 상태를 모니터링합니다.';
+    }
 } 

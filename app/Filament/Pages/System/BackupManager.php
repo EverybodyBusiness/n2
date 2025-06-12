@@ -17,9 +17,11 @@ class BackupManager extends Page implements HasTable
 {
     use InteractsWithTable;
 
+    protected static ?string $slug = 'system/backup';
+    
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationGroup = '시스템';
-    protected static ?string $navigationLabel = '백업 관리';
+    protected static ?string $navigationLabel = '백업';
     protected static ?int $navigationSort = 6;
     
     protected static string $view = 'filament.pages.system.backup-manager';
@@ -36,7 +38,7 @@ class BackupManager extends Page implements HasTable
     
     public function getSubheading(): ?string
     {
-        return '시스템 백업 관리 및 복원';
+        return '시스템 백업을 생성하고 복원 작업을 수행합니다.';
     }
     
     public function table(Table $table): Table

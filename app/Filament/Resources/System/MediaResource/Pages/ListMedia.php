@@ -16,4 +16,9 @@ class ListMedia extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+    
+    public function getSubheading(): ?string
+    {
+        return '시스템에 업로드된 모든 미디어 파일을 관리합니다.';
+    }
 } 

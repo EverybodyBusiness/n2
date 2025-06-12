@@ -120,24 +120,7 @@ public static function canViewAny(): bool
 
 ## 3. 시스템 아키텍처
 
-### 3.1 디렉토리 구조
-```
-app/
-├── Domain/                 # 도메인 기반 구조
-│   ├── Auth/              # 인증 도메인
-│   ├── System/            # 시스템 관리
-│   └── {Domain}/          # 비즈니스 도메인
-├── Infrastructure/         # 인프라 레이어
-│   ├── Monitoring/        # 모니터링 통합
-│   ├── Storage/           # 스토리지 통합
-│   └── Communication/     # 통신 통합
-└── Filament/              # Filament 통합
-    ├── Resources/         # 도메인별 리소스
-    ├── Pages/            # 커스텀 페이지
-    └── Widgets/          # 대시보드 위젯
-```
-
-### 3.2 서비스 레이어 통합
+### 3.1 서비스 레이어 통합
 ```php
 // 모든 서비스는 공통 인터페이스 구현
 interface ServiceInterface
@@ -149,7 +132,7 @@ interface ServiceInterface
 }
 ```
 
-### 3.3 이벤트 기반 통합
+### 3.2 이벤트 기반 통합
 ```php
 // 도메인 이벤트 발생 시 자동 처리
 class DomainEventSubscriber

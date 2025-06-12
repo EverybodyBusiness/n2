@@ -16,4 +16,9 @@ class ListTelescopeEntries extends ListRecords
             // No create action for Telescope entries
         ];
     }
+    
+    public function getSubheading(): ?string
+    {
+        return '시스템 로그와 에러를 실시간으로 모니터링합니다.';
+    }
 }

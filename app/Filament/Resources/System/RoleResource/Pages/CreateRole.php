@@ -4,6 +4,7 @@ namespace App\Filament\Resources\System\RoleResource\Pages;
 
 use App\Filament\Resources\System\RoleResource;
 use BezhanSalleh\FilamentShield\Support\Utils;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -16,6 +17,10 @@ class CreateRole extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        if (! Utils::isSuperAdmin()) {
+            $data[Utils::getTeamModelForeignKey()] = Filament::getTenant()?->id;
+        }
+
         $this->permissions = collect($data)
             ->filter(function ($permission, $key) {
                 return ! in_array($key, ['name', 'guard_name', 'select_all', Utils::getTenantModelForeignKey()]);
@@ -43,5 +48,10 @@ class CreateRole extends CreateRecord
         });
 
         $this->record->syncPermissions($permissionModels);
+    }
+
+    public function getSubheading(): ?string
+    {
+        return '새로운 역할을 생성하고 권한을 설정합니다.';
     }
 }

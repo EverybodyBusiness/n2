@@ -24,6 +24,6 @@ class ListAudits extends ListRecords
 
     public function getSubheading(): ?string
     {
-        return '시스템 내 모든 데이터 변경 이력을 확인할 수 있습니다.';
+        return '시스템의 모든 변경 사항과 사용자 활동을 추적합니다.';
     }
 } 

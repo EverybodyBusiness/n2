@@ -10,10 +10,15 @@ class ViewRole extends ViewRecord
 {
     protected static string $resource = RoleResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\EditAction::make(),
         ];
+    }
+    
+    public function getSubheading(): ?string
+    {
+        return '역할의 상세 정보와 할당된 권한을 확인합니다.';
     }
 }

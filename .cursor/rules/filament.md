@@ -14,7 +14,7 @@ alwaysApply: true
   - `/doc/filament/source_analysis/README.md` 의 내용 숙지, filament의 설계 철학, 동작 메커니즘을 이해한다
   - 사용자의 요청이 있지 않는 한, 자바스크립트 코드는 생성하지 않는다
   - 모든 Resource, Page 는 `HasAdminMenuInfo` 트레이트 사용
-  - navigationGroup, title, navigationLabel, getHeading(), getSubHeading() 관련 코드 생성 금지
+  <!-- - navigationGroup, title, navigationLabel, getHeading(), getSubHeading() 관련 코드 생성 금지 -->
 
 - **[FP2] 버전 호환성과 API 준수**
   - Filament 3.3 버전의 API를 정확히 파악
@@ -38,7 +38,7 @@ alwaysApply: true
 - 모든 Model에 대한 리소스 페이지를 작성
 - 필라멘트 공식 아이콘만 사용
 - 모든 리소스의 Pages\List Page 에서 `HasResizableColumn` 트레이트 사용
-- `slug` 값을 반드시 가질 것
+- `slug` 값을 반드시 가질 것 (도메인 prefix 포함)
 - 한국어 번역을 기본으로 사용
 
 ### 2.2 디렉토리 구조 (도메인 기반)
@@ -103,7 +103,102 @@ app/Filament/
 - `navigationIcon`은 AdminMenu의 icon 필드 사용
 - `navigationLabel`은 AdminMenu의 name 필드 사용
 
-### 2.6 공통 기능 규칙
+#### NavigationGroup 통일 규칙
+- **[NG1] 모든 NavigationGroup은 한글로 통일**
+  - 영문 사용 금지 (System ❌ → 시스템 ✅)
+  - 일관된 명칭 사용 (시스템관리, System Management ❌ → 시스템 ✅)
+  
+- **[NG2] 도메인별 NavigationGroup 표준**
+  ```php
+  // 표준 NavigationGroup 명칭
+  protected static ?string $navigationGroup = '시스템';     // System 도메인
+  protected static ?string $navigationGroup = '사용자';     // Auth/User 도메인
+  protected static ?string $navigationGroup = '콘텐츠';     // Content/Blog 도메인
+  protected static ?string $navigationGroup = '상점';       // Shop/Commerce 도메인
+  protected static ?string $navigationGroup = '보고서';     // Report 도메인
+  protected static ?string $navigationGroup = '설정';       // Settings 도메인
+  ```
+
+- **[NG3] NavigationGroup 우선순위**
+  ```php
+  // navigationSort로 그룹 순서 지정
+  protected static ?int $navigationSort = 1;  // 시스템
+  protected static ?int $navigationSort = 2;  // 사용자
+  protected static ?int $navigationSort = 3;  // 콘텐츠
+  protected static ?int $navigationSort = 4;  // 상점
+  protected static ?int $navigationSort = 5;  // 보고서
+  protected static ?int $navigationSort = 9;  // 설정
+  ```
+
+- **[NG4] 같은 도메인 리소스는 반드시 같은 NavigationGroup 사용**
+  ```php
+  // System 도메인의 모든 리소스
+  class RoleResource { protected static ?string $navigationGroup = '시스템'; }
+  class AuditResource { protected static ?string $navigationGroup = '시스템'; }
+  class MediaResource { protected static ?string $navigationGroup = '시스템'; }
+  class ScheduledTaskResource { protected static ?string $navigationGroup = '시스템'; }
+  ```
+
+- **[NG5] NavigationLabel 명명 규칙**
+  ```php
+  // 단수형 사용, 관리/목록 등의 접미사 제거
+  protected static ?string $navigationLabel = '역할';        // ✅ (역할 관리 ❌)
+  protected static ?string $navigationLabel = '감사 로그';    // ✅ (감사 로그 목록 ❌)
+  protected static ?string $navigationLabel = '미디어';       // ✅ (미디어 파일 ❌)
+  protected static ?string $navigationLabel = '예약 작업';    // ✅ (스케줄 작업 ❌)
+  ```
+
+### 2.6 Slug 규칙
+
+#### Slug 명명 규칙
+- **[SL1] 모든 Resource, Page, Cluster의 slug는 도메인 prefix 필수**
+  ```php
+  // Resource slug 예시
+  protected static ?string $slug = 'system/roles';          // ✅
+  protected static ?string $slug = 'system/audits';         // ✅
+  protected static ?string $slug = 'system/media';          // ✅
+  protected static ?string $slug = 'roles';                  // ❌ (도메인 없음)
+  
+  // Page slug 예시
+  protected static string $slug = 'system/horizon';          // ✅
+  protected static string $slug = 'system/backup';           // ✅
+  protected static string $slug = 'settings/general';        // ✅
+  ```
+
+- **[SL2] Slug 형식 규칙**
+  ```php
+  // 형식: {domain}/{resource-name}
+  // - 도메인: 소문자, 단수형 (system, auth, blog, shop)
+  // - 리소스명: 소문자, 복수형, 하이픈 구분
+  
+  protected static ?string $slug = 'system/scheduled-tasks'; // ✅
+  protected static ?string $slug = 'blog/post-categories';   // ✅
+  protected static ?string $slug = 'System/ScheduledTasks';  // ❌ (대문자)
+  protected static ?string $slug = 'system/scheduled_tasks'; // ❌ (언더스코어)
+  ```
+
+- **[SL3] getSlug() 메소드 구현 시 도메인 prefix 포함**
+  ```php
+  public static function getSlug(): string
+  {
+      $domain = strtolower(static::getDomain()); // 'system'
+      $resource = Str::plural(Str::kebab(class_basename(static::$model))); // 'users'
+      return "{$domain}/{$resource}";
+  }
+  ```
+
+- **[SL4] 도메인별 표준 slug prefix**
+  ```php
+  // 표준 도메인 slug prefix
+  'system/'     // 시스템 관리
+  'auth/'       // 인증 및 사용자
+  'content/'    // 콘텐츠 관리
+  'shop/'       // 전자상거래
+  'report/'     // 보고서
+  'settings/'   // 설정
+  ```
+
+### 2.7 공통 기능 규칙
 - **[R1] 모든 Resource는 `Import`, `Export` 기능을 기본 포함**
   - `Spatie Laravel Excel`, `Filament Excel` 패키지 사용
   - `ListTable` 내에서 기본 액션으로 등록
@@ -116,6 +211,36 @@ app/Filament/
 
 - **[R3] 활성/상태 필터 필수**
   - `active_flag`, `status` 컬럼이 있는 경우 필터 또는 토글 필드 제공
+
+### 2.8 Heading 및 Subheading 규칙
+
+#### Resource의 Heading/Subheading
+- **[HS1] Resource Pages에서 getSubheading() 메소드 구현**
+  ```php
+  // ListPage에서 구현
+  public function getSubheading(): ?string
+  {
+      return '시스템에 등록된 모든 역할을 관리합니다.';
+  }
+  
+  // CreatePage에서 구현
+  public function getSubheading(): ?string
+  {
+      return '새로운 역할을 생성하고 권한을 설정합니다.';
+  }
+  
+  // EditPage에서 구현
+  public function getSubheading(): ?string
+  {
+      return '역할 정보를 수정하고 권한을 변경합니다.';
+  }
+  ```
+
+- **[HS2] Subheading 작성 규칙**
+  - 해당 페이지의 목적을 명확히 설명
+  - 사용자가 수행할 수 있는 작업을 안내
+  - 간결하고 이해하기 쉬운 문장으로 작성
+  - 마침표로 종료
 
 ## 3. 폼(Forms) 규칙
 
@@ -196,6 +321,49 @@ app/Filament/
 ### 5.3 메뉴 및 권한 관리
 - `getNavigationLabel()`, `getNavigationIcon()`, `getNavigationGroup()` 메서드 구현
 - `canAccess()` 메서드로 페이지 접근 권한 제어
+
+### 5.4 Heading 및 Subheading 규칙
+
+#### 페이지 제목 설정
+- **[PH1] 모든 Page는 getHeading()과 getSubheading() 메소드 구현**
+  ```php
+  public function getHeading(): string
+  {
+      return '백업 관리';  // 페이지의 주 제목
+  }
+  
+  public function getSubheading(): ?string
+  {
+      return '시스템 백업을 생성하고 관리합니다.';  // 보조 설명
+  }
+  ```
+
+- **[PH2] Heading 작성 규칙**
+  - 명사형으로 작성 (동사 사용 지양)
+  - 페이지의 핵심 기능을 나타내는 2-4단어
+  - 네비게이션 레이블과 일관성 유지
+
+- **[PH3] Subheading 작성 규칙**
+  - 페이지의 목적과 기능을 설명하는 완전한 문장
+  - 사용자가 이 페이지에서 할 수 있는 작업 안내
+  - 15-30자 내외로 간결하게 작성
+  - 마침표로 종료
+
+- **[PH4] 도메인별 Subheading 예시**
+  ```php
+  // 시스템 도메인
+  '시스템 설정을 구성하고 관리합니다.'
+  '백그라운드 작업의 상태를 모니터링합니다.'
+  '시스템 로그를 조회하고 분석합니다.'
+  
+  // 사용자 도메인
+  '사용자 계정을 생성하고 권한을 할당합니다.'
+  '사용자 활동 내역을 추적하고 관리합니다.'
+  
+  // 콘텐츠 도메인
+  '게시물을 작성하고 발행 상태를 관리합니다.'
+  '카테고리를 구성하고 콘텐츠를 분류합니다.'
+  ```
 
 ## 6. 위젯(Widgets) 규칙
 
