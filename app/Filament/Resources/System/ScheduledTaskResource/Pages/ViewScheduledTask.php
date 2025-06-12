@@ -173,13 +173,11 @@ class ViewScheduledTask extends ViewRecord
                             ->schema([
                                 TextEntry::make('monitor.last_success_at')
                                     ->label('마지막 성공')
-                                    ->dateTime('Y-m-d H:i:s')
-                                    ->default('없음'),
+                                    ->formatStateUsing(fn ($state) => $state ? $state->format('Y-m-d H:i:s') : '없음'),
                                     
                                 TextEntry::make('monitor.last_failure_at')
                                     ->label('마지막 실패')
-                                    ->dateTime('Y-m-d H:i:s')
-                                    ->default('없음'),
+                                    ->formatStateUsing(fn ($state) => $state ? $state->format('Y-m-d H:i:s') : '없음'),
                                     
                                 TextEntry::make('monitor.current_consecutive_failures')
                                     ->label('연속 실패 횟수')
@@ -194,11 +192,11 @@ class ViewScheduledTask extends ViewRecord
                             ->schema([
                                 TextEntry::make('created_at')
                                     ->label('생성일시')
-                                    ->dateTime('Y-m-d H:i:s'),
+                                    ->formatStateUsing(fn ($state) => $state ? $state->format('Y-m-d H:i:s') : '-'),
                                     
                                 TextEntry::make('updated_at')
                                     ->label('수정일시')
-                                    ->dateTime('Y-m-d H:i:s'),
+                                    ->formatStateUsing(fn ($state) => $state ? $state->format('Y-m-d H:i:s') : '-'),
                                     
                                 IconEntry::make('is_system')
                                     ->label('시스템 작업')

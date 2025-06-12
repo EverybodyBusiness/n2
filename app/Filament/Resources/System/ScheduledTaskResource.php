@@ -283,7 +283,7 @@ class ScheduledTaskResource extends Resource
                     
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('생성일')
-                    ->dateTime('Y-m-d H:i')
+                    ->formatStateUsing(fn ($state) => $state ? $state->format('Y-m-d H:i') : '-')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
